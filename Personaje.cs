@@ -6,39 +6,38 @@ public class Personaje : MonoBehaviour
 
     /// <summary>
     /// Permite mover un gameobject, como un personaje, constantemente a la derecha mediante un Rigid Body 2D
-    /// y sin fricción. La fuerza utilizada para avanzar y saltar y la máxima velocidad se pueden cambiar
+    /// y sin fricción. La fuerza utilizada para avanzar y saltar se pueden cambiar
     /// en el editor.
     /// 
     /// José Sánchez
     /// </summary>
-	private Rigidbody2D cuerpo;
+	
     public float fuerzaMov;
     public float fuerzaSalto;
-    public float maxVelocidad;
-    private bool sobrePlataforma;
-    private Vector2 vectorAceleracion;
-    private Vector2 vectorSaltar;
-    private float offset;
 
+    private Rigidbody2D cuerpo;
+    private bool sobrePlataforma;
+    private Vector2 vectorSaltar;
+    private float modificador;
     private bool sobrePlatPrimeraVez;
 
     // Use this for initialization
     void Start()
     {
         cuerpo = GetComponent<Rigidbody2D>();
-        vectorAceleracion = Vector2.right * fuerzaMov;
         vectorSaltar = Vector2.up * fuerzaSalto;
-        offset = 0.25f;
+        modificador = 1;
 
+        fuerzaMov = 5;
+        fuerzaSalto = 400;
+
+        // Desactivando friccion
         PhysicsMaterial2D sinFriccion = new PhysicsMaterial2D("sinFriccion");
         sinFriccion.friction = 0;
-
         gameObject.GetComponent<Collider2D>().sharedMaterial = sinFriccion;
 
         sobrePlatPrimeraVez = false;
     }
-
-
 
     // Update is called once per frame
     void Update()
@@ -48,45 +47,42 @@ public class Personaje : MonoBehaviour
 
     void FixedUpdate()
     {
-
         if (sobrePlatPrimeraVez)
         {
-            if (cuerpo.velocity.x < maxVelocidad)
-            {
-                cuerpo.AddForce(vectorAceleracion, ForceMode2D.Force);
-            }
+            cuerpo.velocity = new Vector2(fuerzaMov * modificador, cuerpo.velocity.y);
 
-            if (Input.GetKey(KeyCode.Space) && sobrePlataforma)
+            if (Input.GetKey(KeyCode.Space) && cuerpo.velocity.y == 0)
             {
+                print("saltando");
                 cuerpo.AddForce(vectorSaltar, ForceMode2D.Force);
             }
         }
-
     }
 
     void OnCollisionEnter2D(Collision2D colision)
     {
-
-        float posInferiorPersonaje = transform.position.y - (gameObject.GetComponent<Collider2D>().bounds.size.y / 2);
-        float posSuperiorPlataforma = colision.collider.transform.position.y + colision.collider.bounds.size.y / 2;
-
-        print("personaje " + posInferiorPersonaje);
-        print("plataforma " + posSuperiorPlataforma);
-        if (posInferiorPersonaje + offset > posSuperiorPlataforma - offset)
+        if (!sobrePlatPrimeraVez)
         {
-            sobrePlataforma = true;
-            print("en plataforma");
-
-            if (!sobrePlatPrimeraVez)
-            {
-                sobrePlatPrimeraVez = true;
-            }
+            sobrePlatPrimeraVez = true;
         }
-
     }
 
-    void OnCollisionExit2D()
+    public void acelerar()
     {
-        sobrePlataforma = false;
+        StopAllCoroutines();
+        StartCoroutine(modificarVelocidad(2));
+    }
+
+    public void desacelerar()
+    {
+        StopAllCoroutines();
+        StartCoroutine(modificarVelocidad(0.5f));
+    }
+
+    IEnumerator modificarVelocidad(float valorModificador)
+    {
+        modificador = valorModificador;
+        yield return new WaitForSeconds(2);
+        modificador = 1;
     }
 }

@@ -6,7 +6,7 @@ public class Fondo : MonoBehaviour
 {
 
     ///<summary>
-    /// Repite un imagen (Contenida en un gameobject) para usarla como fondo. Crea un gameobject
+    /// Repite una imagen (Contenida en un gameobject) para usarla como fondo. Crea un gameobject
     /// con el mismo fondo y los va alternando entre el original y el creado a medida que avanza la cámara.
     /// 
     /// José Sánchez
@@ -24,7 +24,7 @@ public class Fondo : MonoBehaviour
     void Start()
     {
         camara = Camera.main.transform;
-        anchoFondo = fondo.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+        anchoFondo = fondo.GetComponent<SpriteRenderer>().sprite.bounds.size.x * fondo.transform.localScale.x;
 
         Vector3 posFondoDuplicado = new Vector3(fondo.transform.position.x + anchoFondo, fondo.transform.position.y, fondo.transform.position.z);
         fondoDuplicado = Instantiate(fondo, posFondoDuplicado, Quaternion.identity) as GameObject;
