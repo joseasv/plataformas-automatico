@@ -36,6 +36,19 @@ public class Personaje : MonoBehaviour
         sinFriccion.friction = 0;
         gameObject.GetComponent<Collider2D>().sharedMaterial = sinFriccion;
 
+        resetear();
+    }
+
+    public void resetear()
+    {
+        modificador = 1;
+        cuerpo.velocity = Vector2.zero;
+        GameObject reinicio = GameObject.FindGameObjectWithTag("Respawn");
+
+        transform.position = reinicio.transform.position;
+       
+        
+
         sobrePlatPrimeraVez = false;
     }
 
@@ -85,4 +98,6 @@ public class Personaje : MonoBehaviour
         yield return new WaitForSeconds(2);
         modificador = 1;
     }
+
+    
 }

@@ -19,6 +19,7 @@ public class Fondo : MonoBehaviour
     private GameObject fondoDuplicado;
     private GameObject fondoActivo;
 
+    private Vector3 posInicial;
 
     // Use this for initialization
     void Start()
@@ -26,28 +27,41 @@ public class Fondo : MonoBehaviour
         camara = Camera.main.transform;
         anchoFondo = fondo.GetComponent<SpriteRenderer>().sprite.bounds.size.x * fondo.transform.localScale.x;
 
-        Vector3 posFondoDuplicado = new Vector3(fondo.transform.position.x + anchoFondo, fondo.transform.position.y, fondo.transform.position.z);
-        fondoDuplicado = Instantiate(fondo, posFondoDuplicado, Quaternion.identity) as GameObject;
+        posInicial = fondo.transform.position;
+        print("posInicial " + posInicial);
 
+       
+        fondoDuplicado = Instantiate(fondo, posInicial, Quaternion.identity) as GameObject;
+
+        fondoActivo = fondo;
+    }
+
+    public void resetear()
+    {
+        fondo.transform.position = posInicial;
+        print("posInicial " + posInicial);
+        fondoDuplicado.transform.position = posInicial;
         fondoActivo = fondoDuplicado;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (fondoActivo.transform.position.x < camara.position.x)
+        if (camara.position.x > fondoActivo.transform.position.x)
         {
-
+            
             if (fondoActivo == fondoDuplicado)
             {
 
                 fondo.transform.position += Vector3.right * anchoFondo;
                 fondoActivo = fondo;
+                print("moviendo fondo original");
             }
             else
             {
                 fondoDuplicado.transform.position += Vector3.right * anchoFondo;
                 fondoActivo = fondoDuplicado;
+                print("moviendo fondo duplicado");
             }
         }
     }
