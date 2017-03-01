@@ -16,7 +16,7 @@ public class ItemMalo : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.GetComponent<Personaje>().resetear();
+        collision.gameObject.GetComponent<PlayerController2D>().resetear();
         GameObject.FindGameObjectWithTag("ManejadorFondo").GetComponent<Fondo>().resetear();
         Destroy(gameObject);
     }
