@@ -103,9 +103,16 @@ public class CompEnemigo : MonoBehaviour
 
         }
         
-        
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
 
 
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.GetComponent<PlayerController2D>().herir();
+        }
     }
 
     public void herir()

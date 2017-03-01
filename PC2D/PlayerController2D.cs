@@ -79,9 +79,9 @@ public class PlayerController2D : MonoBehaviour
             
             RaycastHit2D ataque = Physics2D.Raycast(origen, Vector2.right * direccion, 1, capaEnemigos);
             Vector2 destino = origen + (Vector2.right * direccion);
-            Debug.DrawLine(origen, destino, Color.cyan, 2, false);
+            //Debug.DrawLine(origen, destino, Color.cyan, 2, false);
             animador.Play("Attack");
-           
+            _motor.velocity = new Vector2(0, 0);           
             if (ataque.collider != null)
             {
                 
@@ -104,13 +104,10 @@ public class PlayerController2D : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void herir()
     {
-
-
-        if (collision.gameObject.tag == "Enemigo"  && !invencible)
+        if (!invencible)
         {
-            //resetear();
             StartCoroutine(herido());
         }
     }
