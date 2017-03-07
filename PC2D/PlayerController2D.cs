@@ -12,9 +12,12 @@ public class PlayerController2D : MonoBehaviour
     private SpriteRenderer sprite;
     private Animator animador;
     private LayerMask capaEnemigos;
-
     private bool invencible;
     private int direccion;
+
+    public GameObject BarraDeVida;
+    
+    private ManejadorVida manVida;
 
     // Use this for initialization
     void Start()
@@ -24,6 +27,10 @@ public class PlayerController2D : MonoBehaviour
         sprite = GetComponentInChildren<SpriteRenderer>();
         animador = GetComponentInChildren<Animator>();
         capaEnemigos = LayerMask.GetMask("Enemigo");
+
+        manVida = BarraDeVida.GetComponent<ManejadorVida>();
+
+       
 
         invencible = false;
     }
@@ -104,10 +111,23 @@ public class PlayerController2D : MonoBehaviour
 
     }
 
-    public void herir()
+    public void herir(Vector2 posEnemigo)
     {
         if (!invencible)
         {
+            manVida.bajarVida();
+            if (posEnemigo.x > transform.position.x)
+            {
+                print("impulso hacia atras");
+                //_motor.GetComponent<Rigidbody2D>().AddForce(new Vector2(-5, -5), ForceMode2D.Impulse);
+                _motor.velocity = new Vector2(-10, 5);
+            }
+            else
+            {
+                print("impulso hacia delante");
+                //_motor.GetComponent<Rigidbody2D>().AddForce(new Vector2(5, 5), ForceMode2D.Impulse);
+                _motor.velocity = new Vector2(10, 5);
+            }
             StartCoroutine(herido());
         }
     }

@@ -111,7 +111,7 @@ public class CompEnemigo : MonoBehaviour
 
         if (collision.gameObject.tag == "Player")
         {
-            collision.GetComponent<PlayerController2D>().herir();
+            collision.GetComponent<PlayerController2D>().herir(transform.position);
         }
     }
 
