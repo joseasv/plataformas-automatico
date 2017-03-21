@@ -111,6 +111,11 @@ public class PlayerController2D : MonoBehaviour
 
     }
 
+    public void modHPPorItem(int cantHP)
+    {
+        BarraDeVida.GetComponent<ManejadorVida>().modVida(cantHP);
+    }
+
     public void herir(Vector2 posEnemigo)
     {
         if (!invencible)

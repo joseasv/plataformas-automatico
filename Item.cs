@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Item : MonoBehaviour {
 
+    public int modHP;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -18,6 +20,10 @@ public class Item : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
+            if (modHP != 0)
+            {
+                collision.GetComponent<PlayerController2D>().modHPPorItem(modHP);
+            }
             Destroy(gameObject);
         }
         
