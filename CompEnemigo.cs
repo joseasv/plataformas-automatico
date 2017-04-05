@@ -6,16 +6,18 @@ public class CompEnemigo : MonoBehaviour
 {
 
     
-    public float fuerzaMov = 2;
+    public float fuerzaMov;
     public bool evitaCaerse;
     public bool perseguir;
     public bool miraALaDerecha;
     public bool inmovil;
     public int vida = 1;
-    /*public bool lanzaProyectil;
-    public GameObject proyectil;*/
-    public LayerMask capaPlataforma;
+    //public bool lanzaProyectil;
+    public GameObject proyectil;
+    public float fuerzaProyectil;
     public float tiempoEsperaDisparo;
+    public LayerMask capaPlataforma;
+    
 
     private int direccion = 1;
     private SpriteRenderer sprite;
@@ -138,15 +140,11 @@ public class CompEnemigo : MonoBehaviour
 
 
             }
-            else
-            {
-                Debug.Log("no hay movimiento");
-                
-            }
+            
         }
 
         
-        /*if (lanzaProyectil && marcaTiempoDisparo <= Time.time)
+        if (proyectil != null && marcaTiempoDisparo <= Time.time)
         {
             
             float posRayX = (sprite.bounds.extents.x + 0.05f) * direccion;
@@ -156,48 +154,38 @@ public class CompEnemigo : MonoBehaviour
 
             if (objeto.transform != null && objeto.transform.tag=="Player")
             {
-                
+                marcaTiempoDisparo = Time.time + tiempoEsperaDisparo;
                 Debug.Log("disparando");
-                StartCoroutine(disparar());
+                animador.SetTrigger("disparando");
+                /*cuerpo.velocity = new Vector2(0, 0);
+                moviendose = false;
+                marcaTiempoDisparo = Time.time + tiempoEsperaDisparo;*/
+                //StartCoroutine(disparar());
             }
 
     
-        }*/
+        }
         
     }
 
-    IEnumerator disparar()
+    public void activarMovimiento()
     {
-        marcaTiempoDisparo = Time.time + tiempoEsperaDisparo;
-
-        cuerpo.velocity = new Vector2(0, 0);
-        moviendose = false;
-
-        AnimatorStateInfo animActual = animador.GetCurrentAnimatorStateInfo(0);
-        animador.SetTrigger("disparando");
-
-        
-        int hashAnim = animActual.shortNameHash;
-
-   
-        Debug.Log("Base Layer.Disparando : " + Animator.StringToHash("Base Layer.Disparando"));
-        Debug.Log("Disparando : " + Animator.StringToHash("Disparando"));
-
-        Debug.Log("shorthash: " + animActual.shortNameHash);
-        Debug.Log("fullpathhash : " + animActual.fullPathHash);
-
-        while (animActual.shortNameHash == animador.GetCurrentAnimatorStateInfo(0).shortNameHash)
-        {
-            Debug.Log("ANimando shrto " + animActual.shortNameHash);
-            Debug.Log("ANimando full " + animActual.fullPathHash);
-            yield return null;
-        }
-        
-        Debug.Log("termiando animacion disparo");
-        //animador.Play("Moving");
-       
+        Debug.Log("activando movimiento");
         moviendose = true;
-        
+    }
+
+    public void desactivarMovimiento()
+    {
+        Debug.Log("desactivando movimiento");
+        moviendose = false;
+        cuerpo.velocity = new Vector2(0, 0);
+    }
+
+    public void dispararProyectil()
+    {
+        Vector2 posProyectil = new Vector2(transform.position.x, transform.position.y + (sprite.bounds.extents.x * direccion));
+        GameObject nuevoProyectil = Instantiate(proyectil, transform.position, Quaternion.identity);
+        nuevoProyectil.GetComponent<Rigidbody2D>().velocity = new Vector2(fuerzaProyectil * direccion, 0);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -211,6 +199,15 @@ public class CompEnemigo : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.GetComponent<PlayerController2D>().herir(transform.position);
+
+        }
+    }
+
     public void herir()
     {
         vida--;
@@ -219,6 +216,25 @@ public class CompEnemigo : MonoBehaviour
             DestroyImmediate(gameObject);
             
         }
+        else
+        {
+            StartCoroutine(herido());
+        }
+    }
+
+    private IEnumerator herido()
+    {
+        
+       
+        for (int i = 0; i < 4; i++)
+        {
+            sprite.enabled = false;
+            yield return new WaitForSeconds(0.2f);
+            sprite.enabled = true;
+            yield return new WaitForSeconds(0.2f);
+        }
+        
+        
     }
 
     private void chequeoCaidas(RaycastHit2D objetoDetras)

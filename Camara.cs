@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Camara : MonoBehaviour {
 
@@ -14,13 +15,15 @@ public class Camara : MonoBehaviour {
     /// </summary>
     public Transform objetivo;
     public bool centrada;
+  
 
     private Vector3 posInicial;
 
 	// Use this for initialization
 	void Start () {
         posInicial = transform.position;
-  
+
+       
 	}
 	
 	// Update is called once per frame
@@ -35,4 +38,6 @@ public class Camara : MonoBehaviour {
         
         transform.position = new Vector3(nuevaPosX, posInicial.y, posInicial.z);
     }
+
+   
 }
