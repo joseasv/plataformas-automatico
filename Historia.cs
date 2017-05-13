@@ -15,7 +15,9 @@ public class Historia : MonoBehaviour {
     public List<GameObject> imagenes;
     public string nombreProxEscena;
 
+    private int numImagenes;
     private int imagenActual;
+    private bool ultimaImagen;
     
 
 	// Use this for initialization
@@ -23,36 +25,37 @@ public class Historia : MonoBehaviour {
 
 
         imagenActual = 0;
-
+        numImagenes = imagenes.Count;
+        ultimaImagen = false;
         foreach (GameObject item in imagenes)
         {
             item.GetComponent<SpriteRenderer>().enabled = false;
         }
-
+        Debug.Log("imagenes.Count " + imagenes.Count);
         imagenes[imagenActual].GetComponent<SpriteRenderer>().enabled = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown(0) && imagenActual < imagenes.Count - 1)
+        
+		if ((Input.GetMouseButtonDown(0) || (Input.GetButtonDown("Fire2"))) && (!ultimaImagen))
         {
+            
             imagenes[imagenActual].GetComponent<SpriteRenderer>().enabled = false;
             imagenActual++;
             imagenes[imagenActual].GetComponent<SpriteRenderer>().enabled = true;
-        }
-        else
-        {
-            if (imagenActual == imagenes.Count - 1)
+            if (imagenActual == numImagenes - 1)
             {
-
+                ultimaImagen = true;
                 StartCoroutine(proximaEscena());
             }
-            
         }
+        
 	}
 
     IEnumerator proximaEscena()
     {
+        
         yield return new WaitForSeconds(3);
         SceneManager.LoadScene(nombreProxEscena);
     }

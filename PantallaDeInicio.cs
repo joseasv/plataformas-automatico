@@ -17,6 +17,8 @@ public class PantallaDeInicio : MonoBehaviour {
         botonesActivados = true;
         pantalla.color = Color.clear;
         pantalla.raycastTarget = false;
+
+        PlayerPrefs.DeleteAll();
 	}
 	
 	// Update is called once per frame

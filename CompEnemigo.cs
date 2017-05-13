@@ -21,6 +21,7 @@ public class CompEnemigo : MonoBehaviour
 
     private int direccion = 1;
     private SpriteRenderer sprite;
+    private BoxCollider2D colision;
     private Transform personaje;
     private Rigidbody2D cuerpo;
     private Animator animador;
@@ -35,7 +36,7 @@ public class CompEnemigo : MonoBehaviour
         cuerpo = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animador = GetComponent<Animator>();
-
+        colision = GetComponent<BoxCollider2D>();
         
 
         if (inmovil)
@@ -83,13 +84,13 @@ public class CompEnemigo : MonoBehaviour
             
             if (moviendose)
             {
-                float posRayX = (sprite.bounds.extents.x + 0.05f) * direccion;
-                Vector2 centro = sprite.bounds.center;
+                float posRayX = (colision.bounds.extents.x + 0.15f) * direccion;
+                Vector2 centro = colision.bounds.center;
 
-                Vector2 posIniRay = new Vector2(posRayX + centro.x, centro.y - sprite.bounds.extents.y);
+                Vector2 posIniRay = new Vector2(posRayX + centro.x, centro.y - colision.bounds.extents.y);
                 RaycastHit2D objeto = Physics2D.Raycast(posIniRay, Vector2.down, 0.5f, capaPlataforma);
 
-                Vector2 posIniRayDetras = new Vector2((-posRayX) + centro.x, centro.y - sprite.bounds.extents.y);
+                Vector2 posIniRayDetras = new Vector2((-posRayX) + centro.x, centro.y - colision.bounds.extents.y);
                 RaycastHit2D objetoDetras = Physics2D.Raycast(posIniRayDetras, Vector2.down, 0.5f, capaPlataforma);
 
 

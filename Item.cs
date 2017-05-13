@@ -13,13 +13,17 @@ public class Item : MonoBehaviour {
     public int modHP;
     public int modPuntaje;
     public int modTiempo;
+    public bool especial;
     private Puntaje puntaje;
     private Tiempo tiempo;
+    private ContadorItemEsp contEspecial;
 
 	// Use this for initialization
 	void Start () {
         puntaje = FindObjectOfType<Puntaje>();
         tiempo = FindObjectOfType<Tiempo>();
+        contEspecial = FindObjectOfType<ContadorItemEsp>();
+
 	}
 	
 	// Update is called once per frame
@@ -44,6 +48,11 @@ public class Item : MonoBehaviour {
             if (modTiempo !=0 && tiempo != null)
             {
                 tiempo.subirTiempo(modTiempo);
+            }
+
+            if (especial && contEspecial != null)
+            {
+                contEspecial.activarItem();
             }
 
             Destroy(gameObject);

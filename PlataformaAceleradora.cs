@@ -4,23 +4,27 @@ using UnityEngine;
 
 public class PlataformaAceleradora : MonoBehaviour {
 
+    
+
 	// Use this for initialization
 	void Start () {
-   
-	}
+     
+    }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
 
-    void OnCollisionEnter2D(Collision2D collision)
+    
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.GetComponent<Personaje>().acelerar();     
+        Debug.Log("en plataforma aceleradora");
+        if (collision.tag == "Player")
+        {
+            collision.gameObject.GetComponent<PlayerController2D>().acelerar();
+        }
     }
 
-    
-
-   
-    
 }

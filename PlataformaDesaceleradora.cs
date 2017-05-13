@@ -14,8 +14,14 @@ public class PlataformaDesaceleradora : MonoBehaviour {
 		
 	}
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.GetComponent<Personaje>().desacelerar();
+        Debug.Log("en plataforma aceleradora");
+        if (collision.tag == "Player")
+        {
+            collision.gameObject.GetComponent<PlayerController2D>().desacelerar();
+
+
+        }
     }
 }

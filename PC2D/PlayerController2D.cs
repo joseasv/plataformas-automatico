@@ -14,10 +14,15 @@ public class PlayerController2D : MonoBehaviour
     private LayerMask capaEnemigos;
     private bool invencible;
     private int direccion;
+    private bool controlActivo;
+    private float modificador;
+
 
     public GameObject BarraDeVida;
     
-    private ManejadorVida manVida;
+    private ManejadorBarra manBarra;
+
+    public bool velModificada { get; private set; }
 
     // Use this for initialization
     void Start()
@@ -28,79 +33,108 @@ public class PlayerController2D : MonoBehaviour
         animador = GetComponentInChildren<Animator>();
         capaEnemigos = LayerMask.GetMask("Enemigo");
 
-        manVida = BarraDeVida.GetComponent<ManejadorVida>();
+        if (BarraDeVida != null)
+        {
+            manBarra = BarraDeVida.GetComponent<ManejadorBarra>();
+        }
 
-       
+        modificador = 1;
 
+        controlActivo = true;
         invencible = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Mathf.Abs(Input.GetAxis(PC2D.Input.HORIZONTAL)) > PC2D.Globals.INPUT_THRESHOLD)
+        if (controlActivo)
         {
-            _motor.normalizedXMovement = Input.GetAxis(PC2D.Input.HORIZONTAL);
-            if (_motor.normalizedXMovement > 0)
+            /*if (Mathf.Abs(Input.GetAxis(PC2D.Input.HORIZONTAL)) > PC2D.Globals.INPUT_THRESHOLD)
             {
-                direccion = 1;
+                _motor.normalizedXMovement = Input.GetAxis(PC2D.Input.HORIZONTAL);
+                if (_motor.normalizedXMovement > 0)
+                {
+                    direccion = 1;
+                }
+                else
+                {
+                    direccion = -1;
+                }
+
             }
             else
             {
-                direccion = -1;
-            }
-                
-        }
-        else
-        {
-            _motor.normalizedXMovement = 0;
-        }
+                _motor.normalizedXMovement = 0;
+            }*/
 
-        // Jump?
-        if (Input.GetButtonDown(PC2D.Input.JUMP))
-        {
-            _motor.Jump();
-        }
-
-        _motor.jumpingHeld = Input.GetButton(PC2D.Input.JUMP);
-
-        if (Input.GetAxis(PC2D.Input.VERTICAL) < -PC2D.Globals.FAST_FALL_THRESHOLD)
-        {
-            _motor.fallFast = true;
-        }
-        else
-        {
-            _motor.fallFast = false;
-        }
-
-        if (Input.GetButtonDown(PC2D.Input.DASH))
-        {
-            _motor.Dash();
-        }
-
-        if (Input.GetButtonDown("Fire2"))
-        {
             
-            Vector2 centro = colisionador.bounds.center;
-            Vector2 origen = new Vector2(centro.x + (colisionador.bounds.extents.x * direccion), centro.y);
-            
-            RaycastHit2D ataque = Physics2D.Raycast(origen, Vector2.right * direccion, 1, capaEnemigos);
-            Vector2 destino = origen + (Vector2.right * direccion);
-            //Debug.DrawLine(origen, destino, Color.cyan, 2, false);
-            animador.Play("Attack");
-            _motor.velocity = new Vector2(0, 0);           
-            if (ataque.collider != null)
+            // movimiento automatico
+            _motor.normalizedXMovement = 1 * modificador;
+
+            // Jump?
+            if (Input.GetButtonDown(PC2D.Input.JUMP))
             {
+                _motor.Jump();
+            }
+
+            _motor.jumpingHeld = Input.GetButton(PC2D.Input.JUMP);
+
+            if (Input.GetAxis(PC2D.Input.VERTICAL) < -PC2D.Globals.FAST_FALL_THRESHOLD)
+            {
+                _motor.fallFast = true;
+            }
+            else
+            {
+                _motor.fallFast = false;
+            }
+
+            if (Input.GetButtonDown(PC2D.Input.DASH))
+            {
+                _motor.Dash();
+            }
+
+            if (Input.GetButtonDown("Fire2"))
+            {
+
+                Vector2 centro = colisionador.bounds.center;
+                Vector2 origen = new Vector2(centro.x + (colisionador.bounds.extents.x * direccion), centro.y);
+
+                RaycastHit2D ataque = Physics2D.Raycast(origen, Vector2.right * direccion, 1, capaEnemigos);
+                Vector2 destino = origen + (Vector2.right * direccion);
                 
-                ataque.collider.gameObject.GetComponent<CompEnemigo>().herir();
+                animador.Play("Attack");
+                _motor.velocity = new Vector2(0, 0);
+                if (ataque.collider != null)
+                {
+
+                    ataque.collider.gameObject.GetComponent<CompEnemigo>().herir();
+                }
             }
         }
+       
 
         
         
     }
 
-   
+    public void acelerar()
+    {
+        StopAllCoroutines();
+        StartCoroutine(modificarVelocidad(2));
+    }
+
+    public void desacelerar()
+    {
+        StopAllCoroutines();
+        StartCoroutine(modificarVelocidad(0.5f));
+    }
+
+    IEnumerator modificarVelocidad(float valorModificador)
+    {
+        modificador = valorModificador;
+        yield return new WaitForSeconds(2);
+        modificador = 1;
+    }
 
     public void resetear()
     {
@@ -113,14 +147,22 @@ public class PlayerController2D : MonoBehaviour
 
     public void modHPPorItem(int cantHP)
     {
-        BarraDeVida.GetComponent<ManejadorVida>().modVida(cantHP);
+        if (BarraDeVida != null)
+        {
+            BarraDeVida.GetComponent<ManejadorBarra>().modVida(cantHP);
+        }
+        
     }
 
     public void herir(Vector2 posEnemigo)
     {
         if (!invencible)
         {
-            manVida.bajarVida();
+            if (BarraDeVida != null)
+            {
+                manBarra.bajarVida();
+            }
+            
             if (posEnemigo.x > transform.position.x)
             {
                 print("impulso hacia atras");
@@ -151,4 +193,15 @@ public class PlayerController2D : MonoBehaviour
         invencible = false;
         //colisionador.enabled = true;
     }
+
+    public void detener()
+    {
+        
+        controlActivo = false;
+        _motor.velocity = new Vector2(0, 0);
+        _motor.enabled = false;
+    }
+
+    
+    
 }

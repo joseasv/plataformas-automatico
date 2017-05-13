@@ -12,11 +12,13 @@ public class BajarVidaTotal : MonoBehaviour {
 
     public GameObject BarraDeVida;
 
-    private ManejadorVida manVida;
+    private Vidas manVida;
+    private ManejadorBarra manBarra;
 
     // Use this for initialization
     void Start () {
-        manVida = BarraDeVida.GetComponent<ManejadorVida>();
+        manVida = FindObjectOfType<Vidas>();
+        manBarra = FindObjectOfType<ManejadorBarra>();
     }
 	
 	// Update is called once per frame
@@ -28,7 +30,8 @@ public class BajarVidaTotal : MonoBehaviour {
     {
         if (collision.tag == "Player")
         {
-            manVida.bajarVidaTotal();
+            
+            manVida.disminuirVida();
             collision.gameObject.GetComponent<PlayerController2D>().detener();
         }
         
